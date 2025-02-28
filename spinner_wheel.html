@@ -1,0 +1,33 @@
+<h1>Roulette Wheel of Misfortune</h1>
+
+
+<input type="text" id="nameInput" placeholder="Enter a name">
+<button onclick="addName()">Add Name</button>
+<ul id="nameList"></ul>
+
+<script>
+  let names = [];
+
+  function addName() {
+      let input = document.getElementById("nameInput").value.trim();
+      if (input !== "") {
+          names.push(input);
+          let listItem = document.createElement("li");
+          listItem.textContent = input;
+          document.getElementById("nameList").appendChild(listItem);
+          document.getElementById("nameInput").value = ""; // Clear input field
+      }
+  }
+
+  function pickRandom() {
+      if (names.length === 0) {
+          alert("No names added!");
+          return;
+      }
+      let randomIndex = Math.floor(Math.random() * names.length);
+      alert("The chosen one is: " + names[randomIndex]);
+  }
+</script>
+
+
+<button onclick="pickRandom()">Pick a Random Name</button>
