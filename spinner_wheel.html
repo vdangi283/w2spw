@@ -3,26 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inspirational Quotes</title>
-    <script>
-        async function fetchQuote() {
-            const response = await fetch("https://zenquotes.io/api/random");
-            const data = await response.json();
-            document.getElementById("quote").innerText = `"${data[0].q}" - ${data[0].a}`;
-        }
-
-        window.onload = fetchQuote;
-    </script>
-</head>
-<body>
-    <h1>Welcome to ChatBot Roulette</h1>
-    <p id="quote">Loading...</p>
-</body>
-</html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roulette Wheel of Misfortune</title>
     <style>
         body {
@@ -37,20 +17,24 @@
             margin-top: 10px;
         }
     </style>
-</head>
-<body>
-
-    <h1>Roulette Wheel of Misfortune</h1>
-    <input type="text" id="nameInput" placeholder="Enter a name">
-    <button onclick="addName()">Add Name</button>
-    <button onclick="spinWheel()">Spin!</button>
-    <p>Click "Spin!" to pick a random name.</p>
-    
-    <canvas id="wheelCanvas" width="300" height="300"></canvas>
-    
-    <ul id="nameList"></ul>
-
     <script>
+        // Fetch inspirational quote on page load
+        async function fetchQuote() {
+            try {
+                const response = await fetch("https://zenquotes.io/api/random");
+                const data = await response.json();
+                document.getElementById("quote").innerText = `"${data[0].q}" - ${data[0].a}`;
+            } catch (error) {
+                console.error("Error fetching quote:", error);
+                document.getElementById("quote").innerText = "Failed to load quote.";
+            }
+        }
+
+        window.onload = function() {
+            fetchQuote();
+            drawWheel();
+        };
+
         let names = [];
 
         function addName() {
@@ -77,6 +61,8 @@
             let canvas = document.getElementById("wheelCanvas");
             let ctx = canvas.getContext("2d");
             let numSegments = names.length;
+            if (numSegments === 0) return;
+
             let angle = (2 * Math.PI) / numSegments;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -86,15 +72,16 @@
                 ctx.moveTo(canvas.width / 2, canvas.height / 2);
                 ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2, angle * i, angle * (i + 1));
                 ctx.lineTo(canvas.width / 2, canvas.height / 2);
-                ctx.fillStyle = i % 2 === 0 ? "lightblue": "lightcoral";
+                ctx.fillStyle = i % 2 === 0 ? "lightblue" : "lightcoral";
                 ctx.fill();
                 ctx.stroke();
-                
+
                 ctx.save();
                 ctx.translate(canvas.width / 2, canvas.height / 2);
                 ctx.rotate(angle * (i + 0.5));
+                ctx.textAlign = "center";
                 ctx.fillStyle = "black";
-                ctx.fillText(name, 40, 5);
+                ctx.fillText(name, canvas.width / 4, 5);
                 ctx.restore();
             });
         }
@@ -109,6 +96,21 @@
             alert("Winner: " + names[winnerIndex]);
         }
     </script>
+</head>
+<body>
+
+    <h1>Roulette Wheel of Misfortune</h1>
+    <input type="text" id="nameInput" placeholder="Enter a name">
+    <button onclick="addName()">Add Name</button>
+    <button onclick="spinWheel()">Spin!</button>
+    <p>Click "Spin!" to pick a random name.</p>
+    
+    <canvas id="wheelCanvas" width="300" height="300"></canvas>
+    
+    <ul id="nameList"></ul>
+
+    <h2>Inspirational Quote</h2>
+    <p id="quote">Loading...</p>
 
 </body>
 </html>
